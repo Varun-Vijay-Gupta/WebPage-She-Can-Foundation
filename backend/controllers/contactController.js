@@ -35,15 +35,18 @@ async function submitContact(req, res, next) {
       console.error("[email] Contact notification failed:", emailErr.message);
     }
 
-    return res.status(201).json({
+        return res.status(201).json({
       success: true,
       message: "Thanks! Your message has been received. We will get back to you soon.",
     });
   } catch (err) {
-    // Attach status if controller-level logic throws it.
-    return next(err);
+    console.error("CONTACT CONTROLLER ERROR:", err);
+
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+    });
   }
 }
-
 module.exports = { submitContact };
 
