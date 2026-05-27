@@ -13,6 +13,11 @@ function createTransporter() {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
+
+    // Prevent hanging requests
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
   });
 }
 
@@ -31,25 +36,32 @@ function buildContactEmailHtml({ name, email, message, submittedAt }) {
         <h1 style="margin: 0; color: #ffffff; font-size: 22px;">New Contact Form Submission</h1>
         <p style="margin: 8px 0 0; color: #f3e8ff; font-size: 14px;">She Can Foundation Website</p>
       </div>
+
       <div style="background: #ffffff; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
             <td style="padding: 10px 0; font-weight: bold; width: 120px; color: #6b7280;">Name</td>
             <td style="padding: 10px 0;">${name}</td>
           </tr>
+
           <tr>
             <td style="padding: 10px 0; font-weight: bold; color: #6b7280;">Email</td>
-            <td style="padding: 10px 0;"><a href="mailto:${email}">${email}</a></td>
+            <td style="padding: 10px 0;">
+              <a href="mailto:${email}">${email}</a>
+            </td>
           </tr>
+
           <tr>
             <td style="padding: 10px 0; font-weight: bold; color: #6b7280; vertical-align: top;">Message</td>
             <td style="padding: 10px 0; white-space: pre-wrap;">${message}</td>
           </tr>
+
           <tr>
             <td style="padding: 10px 0; font-weight: bold; color: #6b7280;">Submitted</td>
             <td style="padding: 10px 0;">${submittedAt}</td>
           </tr>
         </table>
+
         <p style="margin-top: 24px; font-size: 12px; color: #9ca3af;">
           This email was sent automatically from the She Can Foundation contact form.
         </p>
@@ -59,25 +71,65 @@ function buildContactEmailHtml({ name, email, message, submittedAt }) {
 }
 
 async function sendContactNotification({ name, email, message }) {
-  if (!isEmailConfigured()) {
-    console.warn("[email] SMTP not configured. Skipping contact notification.");
-    return { sent: false };
+  try {
+    if (!isEmailConfigured()) {
+      console.warn("[EMAIL] SMTP credentials missing.");
+      return { sent: false };
+    }
+
+    const submittedAt = formatDateTime();
+
+    const notifyEmail =
+      process.env.NOTIFY_EMAIL || "vg9584911@gmail.com";
+
+    const transporter = createTransporter();
+
+    // Verify SMTP connection before sending
+    await transporter.verify();
+
+    const mailOptions = {
+      from: `"She Can Foundation" <${process.env.SMTP_USER}>`,
+      to: notifyEmail,
+      replyTo: email,
+      subject: `New Contact Form Submission from ${name}`,
+      text: `
+New contact form submission
+
+Name: ${name}
+Email: ${email}
+
+Message:
+${message}
+
+Submitted: ${submittedAt}
+      `,
+      html: buildContactEmailHtml({
+        name,
+        email,
+        message,
+        submittedAt,
+      }),
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+
+    console.log("[EMAIL] Contact notification sent:", info.messageId);
+
+    return {
+      sent: true,
+      messageId: info.messageId,
+    };
+  } catch (error) {
+    console.error("[EMAIL ERROR]", error.message);
+
+    return {
+      sent: false,
+      error: error.message,
+    };
   }
-
-  const submittedAt = formatDateTime();
-  const notifyEmail = process.env.NOTIFY_EMAIL || "vg9584911@gmail.com";
-  const transporter = createTransporter();
-
-  await transporter.sendMail({
-    from: `"She Can Foundation" <${process.env.SMTP_USER}>`,
-    to: notifyEmail,
-    replyTo: email,
-    subject: `New Contact: ${name} - She Can Foundation`,
-    text: `New contact form submission\n\nName: ${name}\nEmail: ${email}\nMessage: ${message}\nSubmitted: ${submittedAt}`,
-    html: buildContactEmailHtml({ name, email, message, submittedAt }),
-  });
-
-  return { sent: true };
 }
 
-module.exports = { sendContactNotification, isEmailConfigured };
+module.exports = {
+  sendContactNotification,
+  isEmailConfigured,
+};
