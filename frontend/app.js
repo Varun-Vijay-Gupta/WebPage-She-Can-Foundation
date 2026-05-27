@@ -11,7 +11,7 @@ function getApiBase() {
     return "http://localhost:5000";
   }
 
-  return "https://she-can-backend-38a3.onrender.com/";
+  return "https://she-can-backend-38a3.onrender.com";
 }
 
   function setFieldError(fieldName, message) {
