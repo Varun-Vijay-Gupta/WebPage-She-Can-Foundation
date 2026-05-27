@@ -1,9 +1,20 @@
 # WebPage-She-Can-Foundation
+
 # She Can Foundation - Full Stack NGO Website
 
-A modern full stack NGO website inspired by the official She Can Foundation platform. This project was built using HTML, CSS, JavaScript, Node.js, Express.js, and MySQL. The website focuses on women empowerment, community support, and social impact initiatives.
+A modern full stack NGO website inspired by the official She Can Foundation platform. This project was built using HTML, CSS, JavaScript, Node.js, Express.js, and MySQL. The website focuses on women empowerment, community support, volunteer engagement, and social impact initiatives.
 
-The platform includes a responsive NGO-style frontend, contact form integration, volunteer form, MySQL database storage, admin features, and email notification functionality.
+The platform includes a responsive NGO-style frontend, contact form integration, volunteer registration system, cloud database storage, admin features, and automated email notification functionality.
+
+---
+
+# Live Deployment
+
+Frontend (Vercel):
+https://web-page-she-can-foundation.vercel.app
+
+Backend (Render):
+https://she-can-backend-38a3.onrender.com
 
 ---
 
@@ -14,37 +25,49 @@ The platform includes a responsive NGO-style frontend, contact form integration,
 * Contact Us form
 * Volunteer Join form
 * Form validation
-* MySQL database integration
+* Cloud MySQL database integration
 * REST API using Express.js
-* Email notifications using Nodemailer
+* Automated email notifications
 * Admin dashboard for viewing submissions
-* Smooth animations and modern design
-* Mobile-friendly layout
+* Smooth animations and transitions
+* Mobile-friendly responsive layout
+* Secure backend architecture
+* Production deployment setup
+* Error handling and rate limiting
 
 ---
 
 # Tech Stack
 
-Frontend:
+## Frontend
 
 * HTML5
 * CSS3
-* JavaScript
+* Vanilla JavaScript
 
-Backend:
+## Backend
 
 * Node.js
 * Express.js
 
-Database:
+## Database
 
-* MySQL
+* MySQL (Railway Cloud Database)
 
-Other Tools:
+## Deployment & Hosting
 
-* Nodemailer
-* dotenv
-* mysql2
+* Vercel (Frontend Hosting)
+* Render (Backend Hosting)
+* Railway (Cloud MySQL Database)
+
+## Backend Services & Libraries
+
+* Nodemailer (Email Notifications)
+* dotenv (Environment Variable Management)
+* mysql2 (MySQL Driver)
+* cors (Cross-Origin Resource Sharing)
+* helmet (Security Middleware)
+* morgan (HTTP Request Logger)
 
 ---
 
@@ -56,8 +79,13 @@ project-root/
 ├── backend/
 │   ├── config/
 │   ├── controllers/
+│   ├── middlewares/
+│   ├── models/
 │   ├── routes/
+│   ├── services/
+│   ├── validators/
 │   ├── server.js
+│   ├── app.js
 │   ├── package.json
 │   └── .env
 │
@@ -65,6 +93,7 @@ project-root/
 │   ├── index.html
 │   ├── style.css
 │   ├── script.js
+│   ├── admin/
 │   └── assets/
 │
 ├── sql/
@@ -101,36 +130,37 @@ npm install
 
 ---
 
-# MySQL Database Setup
+# Database Setup (Railway MySQL)
 
-Open MySQL Workbench and run:
+## Step 1: Create Railway MySQL Database
 
-```sql
-CREATE DATABASE she_can_foundation;
-```
+Create a free MySQL database using Railway:
 
-Then select database:
+https://railway.app
 
-```sql
-USE she_can_foundation;
-```
+---
 
-Run the SQL schema from:
+## Step 2: Create Tables
 
-```bash
-sql/schema.sql
-```
-
-Or manually run:
+Open Railway SQL Editor and run:
 
 ```sql
-CREATE TABLE IF NOT EXISTS contacts (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE contacts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
   message TEXT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (id)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE volunteers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  phone VARCHAR(50),
+  skills TEXT,
+  message TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -145,16 +175,21 @@ Example:
 ```env
 PORT=5000
 
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=YOUR_MYSQL_PASSWORD
-DB_NAME=she_can_foundation
-
-EMAIL_USER=vg9584911@gmail.com
-EMAIL_PASS=YOUR_APP_PASSWORD
+DB_HOST=YOUR_RAILWAY_PUBLIC_HOST
+DB_PORT=YOUR_RAILWAY_PUBLIC_PORT
+DB_USER=YOUR_RAILWAY_USERNAME
+DB_PASSWORD=YOUR_RAILWAY_PASSWORD
+DB_NAME=YOUR_RAILWAY_DATABASE
 
 CORS_ORIGIN=http://127.0.0.1:5500
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=YOUR_GMAIL
+SMTP_PASS=YOUR_16_DIGIT_APP_PASSWORD
+
+NOTIFY_EMAIL=vg9584911@gmail.com
 ```
 
 ---
@@ -167,12 +202,13 @@ To enable email notifications:
 2. Generate App Password
 
 Generate app password here:
+
 https://myaccount.google.com/apppasswords
 
 Use generated password inside:
 
 ```env
-EMAIL_PASS=YOUR_APP_PASSWORD
+SMTP_PASS=YOUR_APP_PASSWORD
 ```
 
 ---
@@ -220,53 +256,75 @@ http://127.0.0.1:5500
 
 ---
 
-# API Endpoint
+# API Endpoints
 
-Contact Form API:
+## Contact Form API
 
 ```bash
 POST /api/contact
 ```
 
-Volunteer Form API:
+## Volunteer Form API
 
 ```bash
 POST /api/volunteer
+```
+
+## Health Check API
+
+```bash
+GET /health
 ```
 
 ---
 
 # Deployment
 
-Frontend Hosting:
+## Frontend Hosting
 
 * Vercel
-* Netlify
 
-Backend Hosting:
+## Backend Hosting
 
 * Render
 
-Database Hosting:
+## Database Hosting
 
 * Railway MySQL
-* PlanetScale
+
+---
+
+# Production Deployment Setup
+
+## Frontend
+
+Deploy frontend folder on Vercel.
+
+## Backend
+
+Deploy backend folder on Render.
+
+## Database
+
+Use Railway MySQL public networking credentials.
 
 ---
 
 # Future Improvements
 
 * Authentication system
-* Admin login
+* Admin login panel
 * Dashboard analytics
 * File upload support
-* Donation integration
+* Donation payment integration
 * NGO event management
+* Newsletter subscription
+* CMS integration
 
 ---
 
 # Author
 
-Built by Varun
+Built by Varun Gupta
 
-Inspired by She Can Foundation NGO website.
+Inspired by the official She Can Foundation NGO website.
