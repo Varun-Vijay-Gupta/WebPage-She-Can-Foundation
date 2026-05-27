@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin | She Can Foundation</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./admin.css" />
+  </head>
+  <body>
+    <div class="admin-wrap">
+      <header class="admin-header">
+        <div>
+          <h1>She Can Foundation</h1>
+          <p>Admin Dashboard</p>
+        </div>
+        <button type="button" class="btn btn-outline" id="logoutBtn">Logout</button>
+      </header>
+
+      <section class="login-card" id="loginSection">
+        <h2>Admin Login</h2>
+        <p class="muted">Enter your admin API key to view submissions.</p>
+        <form id="loginForm">
+          <div class="field">
+            <label for="adminKey">Admin API Key</label>
+            <input id="adminKey" type="password" placeholder="Enter admin key" required />
+          </div>
+          <button class="btn btn-primary btn-full" type="submit">Login</button>
+          <p class="field-error" id="loginError" aria-live="polite"></p>
+        </form>
+        <p class="hint muted">
+          Set <code>ADMIN_API_KEY</code> in backend <code>.env</code> file.
+        </p>
+      </section>
+
+      <main class="dashboard hidden" id="dashboard">
+        <div class="tabs">
+          <button class="tab active" type="button" data-tab="contacts">Contact Messages</button>
+          <button class="tab" type="button" data-tab="volunteers">Volunteer Applications</button>
+        </div>
+
+        <div class="panel" id="contactsPanel">
+          <div class="panel-head">
+            <h2>Contact Submissions</h2>
+            <button type="button" class="btn btn-outline btn-sm" id="refreshContacts">Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Message</th>
+                  <th>Submitted</th>
+                </tr>
+              </thead>
+              <tbody id="contactsTableBody">
+                <tr><td colspan="5" class="empty">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel hidden" id="volunteersPanel">
+          <div class="panel-head">
+            <h2>Volunteer Applications</h2>
+            <button type="button" class="btn btn-outline btn-sm" id="refreshVolunteers">Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Skills</th>
+                  <th>Message</th>
+                  <th>Applied</th>
+                </tr>
+              </thead>
+              <tbody id="volunteersTableBody">
+                <tr><td colspan="7" class="empty">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="./admin.js"></script>
+  </body>
+</html>
